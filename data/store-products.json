@@ -1,0 +1,117 @@
+{
+  "source": "Public structured product data from official retailer pages",
+  "updatedAt": "2026-10-18T21:04:30.716174+00:00",
+  "rules": {
+    "maxPricePLN": 100,
+    "minimumDiscountPercent": 20,
+    "requiresProductImage": true,
+    "requiresOriginalPrice": true
+  },
+  "attribution": "Ceny i zdjęcia pobrane z oficjalnych stron sklepów. Sprawdź warunki oraz dostępność u sprzedawcy przed zakupem.",
+  "statuses": [
+    {
+      "store": "Rossmann",
+      "sourceUrl": "https://www.rossmann.pl/promocje",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "Hebe",
+      "sourceUrl": "https://www.hebe.pl/promocje/",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "store": "Super-Pharm",
+      "sourceUrl": "https://www.superpharm.pl/promocje",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "Reserved",
+      "sourceUrl": "https://www.reserved.com/pl/pl/wyprzedaz/kobieta",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "H&M",
+      "sourceUrl": "https://www2.hm.com/pl_pl/sale.html",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "store": "Sinsay",
+      "sourceUrl": "https://www.sinsay.com/pl/pl/all/wyprzedaz-do-50/l-sale-all",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "New Yorker",
+      "sourceUrl": "https://www.newyorker.de/pl/",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "Zara",
+      "sourceUrl": "https://www.zara.com/pl/pl/",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "store": "Bershka",
+      "sourceUrl": "https://www.bershka.com/pl/",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "store": "Pull&Bear",
+      "sourceUrl": "https://www.pullandbear.com/pl/",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "store": "Stradivarius",
+      "sourceUrl": "https://www.stradivarius.com/pl/",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    },
+    {
+      "store": "Cropp",
+      "sourceUrl": "https://www.cropp.com/pl/pl/",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "House",
+      "sourceUrl": "https://www.housebrand.com/pl/pl/",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "Mohito",
+      "sourceUrl": "https://www.mohito.com/pl/pl/",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "CCC",
+      "sourceUrl": "https://ccc.eu/pl",
+      "count": 0,
+      "status": "no_structured_discounted_products"
+    },
+    {
+      "store": "Deichmann",
+      "sourceUrl": "https://www.deichmann.com/PL/pl/shop/welcome.html",
+      "count": 0,
+      "status": "source_unavailable",
+      "error": "HTTPError: HTTP Error 403: Forbidden"
+    }
+  ],
+  "items": []
+}
