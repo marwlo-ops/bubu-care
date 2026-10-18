@@ -49,6 +49,103 @@ input,textarea,select{border-color:#e8dce8;border-radius:13px;padding:12px 13px;
 #shopFilters button{font-size:.82rem}
 @media(min-width:650px){.shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.shop-art{height:135px}}
 @media(max-width:390px){.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.shop-info{padding:10px}.shop-info a{font-size:.76rem;padding:8px}.shop-info p{font-size:.78rem}.product-toolbar select{width:100%}}
+
+/* Bubu Care redesign v2 — softer, lighter and less box-heavy */
+:root{
+ --pink:#d94f91;--rose:#fff2f8;--ink:#302238;--muted:#827486;
+ --line:#f0e4ee;--plum:#442b4a;--lilac:#f2edff;--peach:#fff1e9;
+}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 8% 0%,#fff0f7 0,transparent 34rem),radial-gradient(ellipse at 100% 34rem,#f3edff 0,transparent 30rem),#fcf9fc;color:var(--ink)}
+.wrap{max-width:1120px;padding:24px 18px 100px}
+.hero{min-height:235px;padding:clamp(28px,5vw,54px);border-radius:34px 34px 34px 12px;background:linear-gradient(115deg,#402746 0%,#75416f 52%,#d96b9c 100%);box-shadow:0 20px 55px #512d501f}
+.hero:after{content:"";position:absolute;width:240px;height:240px;border:1px solid #ffffff30;border-radius:46% 54% 61% 39%;right:-70px;bottom:-135px;transform:rotate(25deg);pointer-events:none}
+.hero .eyebrow{font-size:.74rem;letter-spacing:.15em}
+.hero h1{font-size:clamp(2.8rem,8vw,4.6rem);line-height:.98;max-width:70%;margin:16px 0;letter-spacing:-.075em}
+.hero p{max-width:31rem;font-size:1rem;line-height:1.7}
+.hero .heart{font-size:clamp(3.2rem,9vw,5.3rem);right:clamp(18px,4vw,38px);top:clamp(18px,4vw,34px)}
+.tabs{margin:14px -3px 20px;padding:10px 3px;gap:7px;background:#fcf9fce8;border-bottom:1px solid #eee5ef}
+.tabs button{padding:10px 15px;border-color:transparent;background:transparent;box-shadow:none;color:#75667a;font-size:.87rem}
+.tabs button.active{background:var(--plum);color:#fff;box-shadow:0 7px 18px #442b4a20}
+.card{padding:clamp(18px,3vw,26px);border:1px solid #f0e7f0;border-radius:26px 26px 26px 12px;box-shadow:0 9px 30px #4a2c4d08;margin:16px 0}
+.card h2{font-size:1.25rem;font-weight:780;letter-spacing:-.045em}
+.panel.active{animation:softEnter .24s ease-out}
+@keyframes softEnter{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+#home .card:first-child{position:relative;overflow:hidden;background:linear-gradient(130deg,#fff 0%,#fff4f9 70%,#f5efff 100%);border-color:#f4e3ef}
+#home .card:first-child:after{content:"✿";position:absolute;right:18px;top:-26px;font-size:8rem;color:#e8c3da50;transform:rotate(15deg);pointer-events:none}
+#home .card:first-child .quote{position:relative;z-index:1;font-size:clamp(1.25rem,3vw,1.7rem);line-height:1.35;max-width:40rem;letter-spacing:-.035em}
+#home .card:first-child .btn{position:relative;z-index:1}
+#home .card:nth-child(2){background:#f3efff;border-color:#ece4ff}
+#home .card:nth-child(3){background:#fff8ed;border-color:#f6ecdd}
+.btn{background:linear-gradient(120deg,#d94f91,#a85fa7);border-radius:999px;padding:12px 18px;box-shadow:0 7px 18px #d94f911f}
+.feature-btn{border-radius:999px}
+input,textarea,select{border:1px solid #e9dfeb;border-radius:16px;background:#fffdfd;padding:13px 15px}
+input:focus,textarea:focus,select:focus{border-color:#d77bad;box-shadow:0 0 0 4px #d94f9114}
+label{font-size:.9rem;letter-spacing:-.01em}
+.grid{gap:12px}
+.mood{border:1px solid #f0e2ee;background:linear-gradient(145deg,#fff,#fff5fa);border-radius:20px;padding:16px 10px;transition:transform .15s,box-shadow .15s}
+.mood:active{transform:scale(.97)}
+.mood.selected{outline:2px solid #d94f91;box-shadow:0 5px 18px #d94f9119}
+.feature-hero{border-radius:30px 30px 30px 12px;background:linear-gradient(125deg,#fff 0%,#fff0f7 65%,#f2edff 100%);padding:clamp(20px,4vw,32px)}
+.stat{border:0;background:#f5effa;border-radius:19px;padding:15px 10px}
+.stat:nth-child(2){background:#fff0f6}.stat:nth-child(3){background:#fff3e9}
+.progress{background:#f0e4f0;border-radius:999px}
+.product-grid{gap:15px}
+.product-card{border:1px solid #f0e5ef;border-radius:24px 24px 24px 12px;box-shadow:0 8px 25px #3d25430a;overflow:hidden}
+.product-image,.product-image-fallback{height:clamp(155px,37vw,225px);background:radial-gradient(circle at 50% 45%,#fff 0%,#fff 30%,#fff2f8 100%);padding:13px}
+.product-body{padding:15px}
+.product-title{font-size:.96rem;line-height:1.4;letter-spacing:-.025em}
+.product-meta{line-height:1.5}
+.product-link{display:block;text-align:center;border-radius:999px;background:#442b4a;padding:10px 12px}
+.save-promo{border-radius:50%;background:#fff;border-color:#f0dfeb}
+.save-promo.saved{background:#ffe3f0}
+.shop-grid{gap:15px}
+.shop-card{border:0;border-radius:25px 25px 25px 12px;box-shadow:0 8px 25px #3d25430b;background:#fff;overflow:hidden}
+.shop-art{height:138px}
+.shop-art:after{width:170px;height:170px;right:-52px;top:-84px;background:#ffffff70}
+.shop-info{padding:15px}
+.shop-info h3{font-size:1.04rem;letter-spacing:-.03em}
+.shop-info p{color:#837489;line-height:1.5}
+.shop-info a{border-radius:999px;background:#442b4a;padding:10px 13px}
+.offer{border-color:#f1e6ef}
+.pill,.source-tag{border-radius:999px;background:#f8e6f1;color:#a43e77}
+.empty{border:1px dashed #e7d5e5;border-radius:22px;background:#fffafd;padding:25px}
+.saved-item{padding:15px 0;border-color:#f0e5ef}
+.checkrow{border-color:#f0e5ef;padding:13px 0}
+.checkrow input{accent-color:#d94f91}
+footer{padding:32px 0;color:#96889a}
+@media(min-width:650px){
+ .wrap{padding:32px 26px 110px}
+ .hero{min-height:285px}
+ .shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:430px){
+ .wrap{padding:13px 12px 88px}
+ .hero{min-height:205px;padding:27px 19px;border-radius:27px 27px 27px 10px}
+ .hero h1{font-size:2.65rem;max-width:76%;margin:15px 0}
+ .hero p{font-size:.9rem;max-width:82%}
+ .hero .heart{right:13px;top:15px;font-size:2.9rem}
+ .tabs{margin-top:10px;gap:5px}
+ .tabs button{padding:9px 12px;font-size:.8rem}
+ .card{padding:17px;border-radius:22px 22px 22px 10px}
+ .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .product-card{border-radius:20px 20px 20px 10px}
+ .product-image,.product-image-fallback{height:145px;padding:8px}
+ .product-body{padding:10px}
+ .product-title{font-size:.88rem}
+ .product-desc{font-size:.8rem}
+ .product-meta{font-size:.73rem}
+ .product-link{font-size:.78rem;padding:9px 7px}
+ .shop-grid{gap:9px}
+ .shop-card{border-radius:19px 19px 19px 9px}
+ .shop-art{height:100px}
+ .shop-info{padding:11px}
+ .shop-info h3{font-size:.93rem}
+ .shop-info a{font-size:.74rem;padding:8px 10px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body><main class="wrap">
