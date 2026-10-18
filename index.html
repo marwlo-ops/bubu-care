@@ -202,7 +202,7 @@ function renderShopProducts(){const root=$('shopProductList');if(!root)return;ro
  let items=[...officialStoreItems,...pepperItems].filter(x=>isAllowedPromo(x)&&(x.title+' '+(x.description||'')+' '+(x.url||'')+' '+(x.store||'')).toLocaleLowerCase('pl-PL').includes(q)&&(promoCategory==='all'||(promoCategory==='saved'?savedPromoIds.includes(promoId(x)):promoCategoryOf(x)===promoCategory)));
  if(sort==='title')items.sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'pl'));
  if(sort==='saved')items.sort((a,b)=>Number(savedPromoIds.includes(promoId(b)))-Number(savedPromoIds.includes(promoId(a))));
- if(sort==='newest')items.sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
+ if(sort==='newest')items.sort((a,b)=>new Date(b.publishedAt||b.verifiedAt||0)-new Date(a.publishedAt||a.verifiedAt||0));
  const count=$('promoCount');if(count)count.textContent=items.length+' ofert';items=items.slice(0,60);
  if(!items.length){root.innerHTML='<div class="empty">Brak ofert w tej kategorii. Spróbuj innego filtra albo sprawdź ponownie po aktualizacji źródeł.</div>';return}
  const grid=document.createElement('div');grid.className='product-grid';items.forEach(x=>{const card=document.createElement('article');card.className='product-card';if(x.image&&/^https:\/\//i.test(x.image)){const img=document.createElement('img');img.className='product-image';img.src=x.image;img.alt=x.title;img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>{const fb=document.createElement('div');fb.className='product-image-fallback';fb.textContent='🛍️';img.replaceWith(fb)};card.appendChild(img)}else{const fb=document.createElement('div');fb.className='product-image-fallback';fb.textContent='🛍️';card.appendChild(fb)}
