@@ -38,5 +38,7 @@ jobs:
             echo "Brak zmian w danych promocji."
           else
             git commit -m "Refresh Pepper and official store promotions"
+            # Synchronize with newer website/code commits before publishing data.
+            git pull --rebase origin main
             git push
           fi
