@@ -22,6 +22,20 @@ def text_of(node, name):
     found = node.find(name)
     return (found.text or "").strip() if found is not None else ""
 
+def image_of(item):
+    # RSS feeds vary: try media:thumbnail/content, enclosure, then an image in the description.
+    for node in item.iter():
+        tag = node.tag.rsplit("}", 1)[-1].lower()
+        if tag in ("thumbnail", "content", "enclosure"):
+            url = node.attrib.get("url", "").strip()
+            if url.startswith("https://"):
+                return url
+    description = text_of(item, "description")
+    match = re.search(r'<img[^>]+src=["\'](https://[^"\']+)["\']', description, re.I)
+    if match:
+        return unescape(match.group(1))
+    return ""
+
 def main():
     req = urllib.request.Request(FEED_URL, headers={"User-Agent": "BubuCareDeals/1.0 (RSS reader)"})
     with urllib.request.urlopen(req, timeout=25) as response:
@@ -38,14 +52,19 @@ def main():
             published = parsedate_to_datetime(pub_date).astimezone(timezone.utc).isoformat()
         except Exception:
             published = ""
-        description = clean_html(text_of(item, "description"))[:500]
-        items.append({
+        raw_description = text_of(item, "description")
+        description = clean_html(raw_description)[:500]
+        image = image_of(item)
+        entry = {
             "title": title,
             "url": link,
             "publishedAt": published,
             "description": description,
             "source": "Pepper.pl"
-        })
+        }
+        if image:
+            entry["image"] = image
+        items.append(entry)
     if not items:
         raise RuntimeError("RSS feed returned no usable offers; keeping previous snapshot.")
     OUT.parent.mkdir(parents=True, exist_ok=True)
