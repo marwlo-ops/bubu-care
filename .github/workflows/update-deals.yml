@@ -2,6 +2,12 @@ name: Aktualizuj okazje Bubu Care
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/update_deals.py"
+      - "scripts/update_store_products.py"
+      - ".github/workflows/update-deals.yml"
   schedule:
     - cron: "17 6 * * *"
 
