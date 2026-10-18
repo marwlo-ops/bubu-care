@@ -91,9 +91,25 @@ def offer_values(product):
         offers = offers["offers"][0] if offers["offers"] else offers
     if not isinstance(offers, dict):
         offers = {}
-    price = number(offers.get("price") or offers.get("lowPrice") or product.get("price"))
+    price_spec = offers.get("priceSpecification") or product.get("priceSpecification") or {}
+    if isinstance(price_spec, list):
+        specs = price_spec
+        price_spec = next((v for v in specs if isinstance(v, dict) and number(v.get("price")) is not None), {})
+    price = number(offers.get("price") or offers.get("lowPrice") or product.get("price") or (price_spec.get("price") if isinstance(price_spec, dict) else None))
     old = number(offers.get("highPrice") or offers.get("priceValidUntilOriginal") or product.get("highPrice"))
-    currency = offers.get("priceCurrency") or "PLN"
+    # Some stores expose the crossed-out price as a separate PriceSpecification.
+    specs = offers.get("priceSpecification") or product.get("priceSpecification") or []
+    if isinstance(specs, dict):
+        specs = [specs]
+    if isinstance(specs, list):
+        for spec in specs:
+            if not isinstance(spec, dict):
+                continue
+            spec_price = number(spec.get("price"))
+            price_type = str(spec.get("priceType") or spec.get("name") or "").lower()
+            if spec_price is not None and spec_price > (price or 0) and ("strike" in price_type or "list" in price_type or "regular" in price_type or "old" in price_type or "rrp" in price_type):
+                old = max(old or 0, spec_price)
+    currency = offers.get("priceCurrency") or (price_spec.get("priceCurrency") if isinstance(price_spec, dict) else None) or "PLN"
     availability = str(offers.get("availability") or "")
     url = offers.get("url") or product.get("url") or ""
     return price, old, currency, availability, url
@@ -167,6 +183,15 @@ def main():
         all_products.extend(result.get("items", []))
         print(f'{store["name"]}: {result["count"]} verified offers ({result["status"]})')
         time.sleep(0.4)
+    # If all stores temporarily block the runner, retain the last good snapshot
+    # rather than replacing working offers with an empty list.
+    if not all_products and OUT.exists():
+        try:
+            previous = json.loads(OUT.read_text(encoding="utf-8"))
+            all_products = previous.get("items", []) if isinstance(previous.get("items", []), list) else []
+            print(f"Keeping {len(all_products)} products from the previous snapshot; no new official products were available.")
+        except Exception:
+            pass
     payload = {
         "source": "Public structured product data from official retailer pages",
         "updatedAt": datetime.now(timezone.utc).isoformat(),
