@@ -117,7 +117,7 @@ $('addComparison').onclick=()=>{
 let pepperItems=[];
 function isAllowedPromo(x){
  const t=(String(x.title||'')+' '+String(x.description||'')+' '+String(x.url||'')).toLocaleLowerCase('pl-PL');
- const allow=[/kosmet|pielęgn|pielegn|makijaż|makijaz|krem|serum|szampon|odżywk|odzywk|masecz|perfum|zapach|dezodor|żel pod prysznic|zel pod prysznic|pasta do zębów|pasta do zebow|szczoteczk|suplement|witamin|białk|bialk|kreatyn|kolagen|odżywka białkowa|odzywka bialkowa|żywno|zywno|jedzen|spożyw|spozyw|kawa|herbat|czekolad|przekąsk|przekask|makaron|ryż|ryz|płatki|platki|słodycz|slodycz|buty|obuwie|sneaker|adidas|nike|puma|reebok|odzież|odziez|ubran|sukien|spodnie|bluz|kurtk|sweter|koszul|bielizn|skarpet|torebk|plecak|portfel|pasek|biżuteri|bizuteri|zegarek|okulary|czapk|szalik|rękawicz|rekawicz|akcesori|moda/];
+ const allow=[/kosmet|pielęgn|pielegn|makijaż|makijaz|krem|serum|szampon|odżywk|odzywk|masecz|perfum|zapach|dezodor|żel pod prysznic|zel pod prysznic|pasta do zębów|pasta do zebow|szczoteczk|suplement|witamin|białk|bialk|kreatyn|kolagen|odżywka białkowa|odzywka bialkowa|żywno|zywno|jedzen|spożyw|spozyw|kawa|herbat|czekolad|przekąsk|przekask|makaron|ryż|ryz|płatki|platki|słodycz|slodycz|buty|obuwie|sneaker|adidas|nike|puma|reebok|deichmann|ccc\.eu|odzież|odziez|ubran|sukien|spodnie|bluz|kurtk|sweter|koszul|bielizn|skarpet|new yorker|newyorker|zara|bershka|pull&bear|pullandbear|stradivarius|cropp|housebrand|mohito|reserved|sinsay|h&m|torebk|plecak|portfel|pasek|biżuteri|bizuteri|zegarek|okulary|czapk|szalik|rękawicz|rekawicz|akcesori|moda/];
  return allow.some(re=>re.test(t));
 }
 function renderPepper(){
