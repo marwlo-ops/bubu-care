@@ -1,0 +1,29 @@
+name: Aktualizuj okazje Bubu Care
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-pepper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Aktualizuj publiczny feed Pepper
+        run: python scripts/update_deals.py
+      - name: Zapisz zmiany, jeśli są nowe okazje
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/pepper.json
+          if git diff --cached --quiet; then
+            echo "Brak zmian w feedzie."
+          else
+            git commit -m "Refresh Pepper offers feed"
+            git push
+          fi
