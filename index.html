@@ -65,7 +65,7 @@ input,textarea,select{border-color:#e8dce8;border-radius:13px;padding:12px 13px;
 <div class="card"><h2>🔥 Produkty z miniaturami</h2><p>Oferty społeczności Pepper z prawdziwymi zdjęciami i opisami. Użyj filtrów, żeby znaleźć kosmetyki, jedzenie, odżywki i suplementy, perfumy, buty, ubrania oraz dodatki.</p><label for="shopProductSearch">Szukaj produktu lub marki</label><input id="shopProductSearch" placeholder="np. perfumy, New Yorker, sneakersy, krem…">
 <div class="deal-filter-row category-filters" id="promoCategoryFilters"><button class="active" data-promo-category="all">Wszystkie</button><button data-promo-category="beauty">Kosmetyki</button><button data-promo-category="food">Jedzenie</button><button data-promo-category="supplements">Suplementy</button><button data-promo-category="fragrance">Perfumy</button><button data-promo-category="shoes">Buty</button><button data-promo-category="clothes">Ubrania</button><button data-promo-category="accessories">Dodatki</button><button data-promo-category="saved">♥ Zapisane</button></div>
 <div class="product-toolbar"><label for="shopProductSort">Sortuj okazje</label><select id="shopProductSort"><option value="newest">Najnowsze</option><option value="title">Nazwa A–Z</option><option value="saved">Najpierw zapisane</option></select><span id="promoCount" class="small" aria-live="polite"></span></div>
-<div id="shopProductList"></div></div>
+<p class="small" id="officialStoreStatus" aria-live="polite">Pobieranie danych z oficjalnych sklepów…</p><div id="shopProductList"></div></div>
 </section>
 <section id="mood" class="panel"><div class="card"><h2>Jak się dziś czujesz? 🌷</h2><p>Każdy nastrój jest w porządku.</p><div class="grid" id="moods"><button class="mood" data-mood="🥰 Szczęśliwa">🥰<br>Szczęśliwa</button><button class="mood" data-mood="😌 Spokojna">😌<br>Spokojna</button><button class="mood" data-mood="😴 Zmęczona">😴<br>Zmęczona</button><button class="mood" data-mood="🌧️ Gorzej dziś">🌧️<br>Gorzej dziś</button></div><label for="moodNote">Chcesz coś dopisać?</label><textarea id="moodNote" placeholder="Co masz dziś w głowie?"></textarea><button class="btn" id="saveMood">Zapisz nastrój</button><p id="moodSaved" class="small"></p></div><div class="card"><h2>Ostatni zapis</h2><p id="lastMood">Jeszcze nie zapisano nastroju.</p></div></section>
 <section id="notes" class="panel"><div class="card"><h2>Notatki dla siebie 💌</h2><p>Pomysły, małe cele albo coś, czego nie chcesz zapomnieć.</p><textarea id="notesText" placeholder="Napisz tutaj..."></textarea><button class="btn" id="saveNotes">Zapisz notatkę</button><p id="notesSaved" class="small"></p></div><div class="card"><h2>Mała lista życzeń</h2><label for="wish">Co chciałabyś zapamiętać?</label><div class="row"><input id="wish" placeholder="np. książka, kosmetyk..."><button class="btn" id="addWish">Dodaj</button></div><ul id="wishList"></ul></div></section>
@@ -114,9 +114,10 @@ $('addComparison').onclick=()=>{
  comparisons.push({product,store,price,size,end,url});write('bc_comparisons',comparisons);
  $('compareProduct').value='';$('comparePrice').value='';$('compareSize').value='';$('compareEnd').value='';$('compareUrl').value='';renderComparisons();
 };
-let pepperItems=[];
+let pepperItems=[];let officialStoreItems=[];let officialStoreSnapshot={};
 function isAllowedPromo(x){
- const t=(String(x.title||'')+' '+String(x.description||'')+' '+String(x.url||'')).toLocaleLowerCase('pl-PL');
+ if(['beauty','food','supplements','fragrance','shoes','clothes','accessories'].includes(x.category))return true;
+ const t=(String(x.title||'')+' '+String(x.description||'')+' '+String(x.url||'')+' '+String(x.store||'')).toLocaleLowerCase('pl-PL');
  const allow=[/kosmet|pielęgn|pielegn|makijaż|makijaz|krem|serum|szampon|odżywk|odzywk|masecz|perfum|zapach|dezodor|żel pod prysznic|zel pod prysznic|pasta do zębów|pasta do zebow|szczoteczk|suplement|witamin|białk|bialk|kreatyn|kolagen|odżywka białkowa|odzywka bialkowa|żywno|zywno|jedzen|spożyw|spozyw|kawa|herbat|czekolad|przekąsk|przekask|makaron|ryż|ryz|płatki|platki|słodycz|slodycz|buty|obuwie|sneaker|adidas|nike|puma|reebok|deichmann|ccc\.eu|odzież|odziez|ubran|sukien|spodnie|bluz|kurtk|sweter|koszul|bielizn|skarpet|new yorker|newyorker|zara|bershka|pull&bear|pullandbear|stradivarius|cropp|housebrand|mohito|reserved|sinsay|h&m|torebk|plecak|portfel|pasek|biżuteri|bizuteri|zegarek|okulary|czapk|szalik|rękawicz|rekawicz|akcesori|moda/];
  return allow.some(re=>re.test(t));
 }
@@ -147,13 +148,16 @@ function renderPepper(){
  root.appendChild(grid);
 }
 async function loadPepper(){
- const status=$('pepperStatus');try{
-  const response=await fetch('./data/pepper.json?ts='+Date.now(),{cache:'no-store'});
-  if(!response.ok)throw new Error('Feed jeszcze nieopublikowany');
-  const data=await response.json();pepperItems=Array.isArray(data.items)?data.items:[];
-  status.textContent='Ostatnia aktualizacja: '+(data.updatedAt?new Date(data.updatedAt).toLocaleString('pl-PL'):'oczekuje na pierwsze pobranie')+' · '+pepperItems.length+' okazji';
-  renderPepper();renderShopProducts();
- }catch(e){status.textContent='Feed oczekuje na pierwsze uruchomienie automatycznej aktualizacji. Możesz już przeglądać Pepper na stronie źródłowej.';renderPepper()}
+ const status=$('pepperStatus');
+ const pepperTask=(async()=>{const response=await fetch('./data/pepper.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Pepper feed unavailable');return response.json()})();
+ const storesTask=(async()=>{const response=await fetch('./data/store-products.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Official store feed unavailable');return response.json()})();
+ const [pepperResult,storesResult]=await Promise.allSettled([pepperTask,storesTask]);
+ if(pepperResult.status==='fulfilled'){const data=pepperResult.value;pepperItems=Array.isArray(data.items)?data.items:[]}
+ if(storesResult.status==='fulfilled'){officialStoreSnapshot=storesResult.value||{};officialStoreItems=Array.isArray(officialStoreSnapshot.items)?officialStoreSnapshot.items:[]}
+ const statusParts=[];if(pepperResult.status==='fulfilled')statusParts.push('Pepper: '+pepperItems.length);else statusParts.push('Pepper: chwilowo niedostępny');if(storesResult.status==='fulfilled')statusParts.push('oficjalne sklepy: '+officialStoreItems.length);
+ if(status)status.textContent='Aktualizacja danych: '+statusParts.join(' · ')+(storesResult.status==='fulfilled'&&officialStoreSnapshot.updatedAt?' · '+new Date(officialStoreSnapshot.updatedAt).toLocaleString('pl-PL'):'');
+ const storeStatus=$('officialStoreStatus');if(storeStatus){const statuses=Array.isArray(officialStoreSnapshot.statuses)?officialStoreSnapshot.statuses:[];const ok=statuses.filter(x=>x.status==='ok').length;storeStatus.textContent=officialStoreItems.length+' ofert spełniających filtry z oficjalnych stron · '+ok+' sklepów zwróciło produkty z pełną ceną, rabatem i zdjęciem. Źródła bez publicznych danych produktowych pozostają dostępne przez link do sklepu.'}
+ renderPepper();renderShopProducts();
 }
 $('pepperSearch')?.addEventListener('input',renderPepper);
 $('maxPrice').oninput=renderDeals;$('minDiscount').oninput=renderDeals;renderDeals();renderMood();renderWishes();renderComparisons();loadPepper();
@@ -184,7 +188,7 @@ function renderShopGrid(){const root=$('shopGrid');if(!root)return;root.innerHTM
 document.querySelectorAll('[data-shop]').forEach(b=>b.addEventListener('click',()=>{selectedShop=b.dataset.shop;document.querySelectorAll('[data-shop]').forEach(x=>x.classList.toggle('active',x===b));renderShopGrid()}));
 let promoCategory='all';let savedPromoIds=read('bc_deal_favorites',[]);
 function promoId(x){return String(x.url||x.title||'').trim()}
-function promoCategoryOf(x){const t=(String(x.title||'')+' '+String(x.description||'')).toLocaleLowerCase('pl-PL');
+function promoCategoryOf(x){if(['beauty','food','supplements','fragrance','shoes','clothes','accessories'].includes(x.category))return x.category;const t=(String(x.title||'')+' '+String(x.description||'')+' '+String(x.store||'')).toLocaleLowerCase('pl-PL');
  if(/perfum|eau de|parfum|woda toaletowa|woda perfumowana|zapach/.test(t))return 'fragrance';
  if(/suplement|witamin|kreatyn|kolagen|białk|bialk|odżywka białkowa|odzywka bialkowa|magnez|omega-3|elektrolit/.test(t))return 'supplements';
  if(/buty|obuwie|sneaker|adidas|nike|puma|reebok|deichmann|ccc\.eu|trampk|botk|sandał|sandal/.test(t))return 'shoes';
@@ -195,7 +199,7 @@ function promoCategoryOf(x){const t=(String(x.title||'')+' '+String(x.descriptio
  return 'all';
 }
 function renderShopProducts(){const root=$('shopProductList');if(!root)return;root.innerHTML='';const q=($('shopProductSearch')?.value||'').trim().toLocaleLowerCase('pl-PL');const sort=$('shopProductSort')?.value||'newest';
- let items=pepperItems.filter(x=>isAllowedPromo(x)&&(x.title+' '+(x.description||'')+' '+(x.url||'')).toLocaleLowerCase('pl-PL').includes(q)&&(promoCategory==='all'||(promoCategory==='saved'?savedPromoIds.includes(promoId(x)):promoCategoryOf(x)===promoCategory)));
+ let items=[...officialStoreItems,...pepperItems].filter(x=>isAllowedPromo(x)&&(x.title+' '+(x.description||'')+' '+(x.url||'')+' '+(x.store||'')).toLocaleLowerCase('pl-PL').includes(q)&&(promoCategory==='all'||(promoCategory==='saved'?savedPromoIds.includes(promoId(x)):promoCategoryOf(x)===promoCategory)));
  if(sort==='title')items.sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'pl'));
  if(sort==='saved')items.sort((a,b)=>Number(savedPromoIds.includes(promoId(b)))-Number(savedPromoIds.includes(promoId(a))));
  if(sort==='newest')items.sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
@@ -203,7 +207,7 @@ function renderShopProducts(){const root=$('shopProductList');if(!root)return;ro
  if(!items.length){root.innerHTML='<div class="empty">Brak ofert w tej kategorii. Spróbuj innego filtra albo sprawdź ponownie po aktualizacji źródeł.</div>';return}
  const grid=document.createElement('div');grid.className='product-grid';items.forEach(x=>{const card=document.createElement('article');card.className='product-card';if(x.image&&/^https:\/\//i.test(x.image)){const img=document.createElement('img');img.className='product-image';img.src=x.image;img.alt=x.title;img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>{const fb=document.createElement('div');fb.className='product-image-fallback';fb.textContent='🛍️';img.replaceWith(fb)};card.appendChild(img)}else{const fb=document.createElement('div');fb.className='product-image-fallback';fb.textContent='🛍️';card.appendChild(fb)}
  const body=document.createElement('div');body.className='product-body';const top=document.createElement('div');top.className='product-card-top';const title=document.createElement('h3');title.className='product-title';title.textContent=x.title;const fav=document.createElement('button');fav.type='button';fav.className='save-promo'+(savedPromoIds.includes(promoId(x))?' saved':'');fav.textContent=savedPromoIds.includes(promoId(x))?'♥':'♡';fav.setAttribute('aria-label',savedPromoIds.includes(promoId(x))?'Usuń z zapisanych':'Zapisz ofertę');fav.onclick=()=>{const id=promoId(x);savedPromoIds=savedPromoIds.includes(id)?savedPromoIds.filter(v=>v!==id):[...savedPromoIds,id];write('bc_deal_favorites',savedPromoIds);renderShopProducts()};top.append(title,fav);
- const desc=document.createElement('p');desc.className='product-desc';desc.textContent=x.description||'Szczegóły oferty na stronie źródłowej.';const meta=document.createElement('p');meta.className='product-meta';meta.textContent='Pepper · ceny i dostępność potwierdź u sprzedawcy';const a=document.createElement('a');a.className='product-link';a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Sprawdź ofertę ↗';body.append(top,desc,meta,a);card.appendChild(body);grid.appendChild(card)});root.appendChild(grid)}
+ const desc=document.createElement('p');desc.className='product-desc';desc.textContent=x.description||'Szczegóły oferty na stronie źródłowej.';const meta=document.createElement('p');meta.className='product-meta';meta.textContent=x.price!=null?'Cena: '+Number(x.price).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł'+(x.oldPrice!=null?' · było '+Number(x.oldPrice).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł':'')+(x.discount!=null?' · −'+x.discount+'%':'')+' · '+(x.source||x.store||'oferta'):'Pepper · cena i dostępność potwierdź u sprzedawcy';const a=document.createElement('a');a.className='product-link';a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Sprawdź ofertę ↗';body.append(top,desc,meta,a);card.appendChild(body);grid.appendChild(card)});root.appendChild(grid)}
 $('shopProductSearch')?.addEventListener('input',renderShopProducts);$('shopProductSort')?.addEventListener('change',renderShopProducts);
 document.querySelectorAll('[data-promo-category]').forEach(b=>b.addEventListener('click',()=>{promoCategory=b.dataset.promoCategory;document.querySelectorAll('[data-promo-category]').forEach(x=>x.classList.toggle('active',x===b));renderShopProducts()}));
 
