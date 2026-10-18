@@ -9,21 +9,28 @@ permissions:
   contents: write
 
 jobs:
-  refresh-pepper:
+  refresh-deals:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Pobierz repozytorium
         uses: actions/checkout@v4
-      - name: Aktualizuj publiczny feed Pepper
+      - name: Ustaw Pythona
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Aktualizuj feed Pepper
         run: python scripts/update_deals.py
-      - name: Zapisz zmiany, jeśli są nowe okazje
+      - name: Pobierz zweryfikowane okazje z oficjalnych sklepów
+        run: python scripts/update_store_products.py
+      - name: Zapisz zaktualizowane dane
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/pepper.json
+          git add data/pepper.json data/store-products.json
           if git diff --cached --quiet; then
-            echo "Brak zmian w feedzie."
+            echo "Brak zmian w danych promocji."
           else
-            git commit -m "Refresh Pepper offers feed"
+            git commit -m "Refresh Pepper and official store promotions"
             git push
           fi
