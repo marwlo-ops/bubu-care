@@ -1,6 +1,6 @@
 {
   "source": "Public structured product data from official retailer pages",
-  "updatedAt": "2026-10-20T07:02:25.370152+00:00",
+  "updatedAt": "2026-10-21T07:04:03.623169+00:00",
   "rules": {
     "maxPricePLN": 100,
     "minimumDiscountPercent": 20,
@@ -39,7 +39,7 @@
       "sourceUrl": "https://www2.hm.com/pl_pl/sale.html",
       "count": 0,
       "status": "source_unavailable",
-      "error": "TimeoutError: The read operation timed out"
+      "error": "HTTPError: HTTP Error 403: Forbidden"
     },
     {
       "store": "Sinsay",
