@@ -1,6 +1,6 @@
 {
   "source": "Public structured product data from official retailer pages",
-  "updatedAt": "2026-10-22T07:05:31.400948+00:00",
+  "updatedAt": "2026-10-23T07:03:03.127212+00:00",
   "rules": {
     "maxPricePLN": 100,
     "minimumDiscountPercent": 20,
