@@ -1,6 +1,6 @@
 {
   "source": "Public structured product data from official retailer pages",
-  "updatedAt": "2026-11-06T07:32:51.231426+00:00",
+  "updatedAt": "2026-11-07T07:19:30.439001+00:00",
   "rules": {
     "maxPricePLN": 100,
     "minimumDiscountPercent": 20,
@@ -13,7 +13,8 @@
       "store": "Rossmann",
       "sourceUrl": "https://www.rossmann.pl/promocje",
       "count": 0,
-      "status": "no_structured_discounted_products"
+      "status": "source_unavailable",
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "store": "Hebe",
